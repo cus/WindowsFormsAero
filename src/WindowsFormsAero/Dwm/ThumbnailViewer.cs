@@ -167,6 +167,20 @@ namespace WindowsFormsAero.Dwm {
 			}
 		}
 
+		Rectangle _crop = Rectangle.Empty;
+
+		[Description("Set crop rectangle of the source window. An empty (all components zeroed) rectangle means no cropping."), Category("Appearance")]
+		public Rectangle Crop
+		{
+			get { return _crop; }
+			set
+			{
+				_crop = value;
+				UpdateThumbnailInternal(Visible);
+			}
+		}
+
+
 		#endregion
 
 		#region Helper methods
@@ -179,15 +193,23 @@ namespace WindowsFormsAero.Dwm {
 				return;
 
 			if (_thumbnail != null) {
-				_thumbnail.Update(RecomputeThumbnailRectangle(), _opacity, visible, _onlyClientArea);
+				Size source = _thumbnail.GetSourceSize();
+				if (!_crop.IsEmpty) {
+					var crop = _crop;
+					crop.Intersect(new Rectangle(new Point(0, 0), source));
+					if (crop.Width > 0 && crop.Height > 0)
+						_thumbnail.Update(RecomputeThumbnailRectangle(crop.Size), crop, _opacity, visible, _onlyClientArea);
+				} else {
+					_thumbnail.Update(RecomputeThumbnailRectangle(source), _opacity, visible, _onlyClientArea);
+				}
 			}
 
 			_lastVisibilityStatus = visible;
 		}
 
-		private Rectangle RecomputeThumbnailRectangle() {
-			if (_topLevelForm == null || _thumbnail == null)
-				throw new Exception("whops, no parent or no thumbnail");
+		private Rectangle RecomputeThumbnailRectangle(Size source) {
+			if (_topLevelForm == null)
+				throw new Exception("whops, no parent");
 
 			Point offset = Point.Empty;
 
@@ -218,7 +240,6 @@ namespace WindowsFormsAero.Dwm {
 
 			//Fit source rectangle to thumbnail rectangle
 			Size destination = this.ClientSize;
-			Size source = _thumbnail.GetSourceSize();
 
 			if (source.Width < destination.Width && source.Height < destination.Height && !_scaleSmallerThumbnails) {
 				destination = source;

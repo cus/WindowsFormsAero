@@ -147,6 +147,7 @@ namespace WindowsFormsAero.Dwm {
 
 		ContentAlignment _alignment = ContentAlignment.MiddleCenter;
 
+		[Description("Determines the alignment of the thumbnail picture within the control."), Category("Appearance"), DefaultValue(ContentAlignment.MiddleCenter)]
 		public ContentAlignment ThumbnailAlignment {
 			get { return _alignment; }
 			set {
@@ -157,6 +158,7 @@ namespace WindowsFormsAero.Dwm {
 
 		bool _scaleSmallerThumbnails = true;
 
+		[Description("Sets that thumbnails smaller than the control are scaled up or kept at their orignial size."), Category("Appearance"), DefaultValue(true)]
 		public bool ScaleSmallerThumbnails {
 			get { return _scaleSmallerThumbnails; }
 			set {

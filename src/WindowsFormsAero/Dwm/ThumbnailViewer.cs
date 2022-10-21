@@ -220,18 +220,15 @@ namespace WindowsFormsAero.Dwm {
 
 			if (source.Width < destination.Width && source.Height < destination.Height && !_scaleSmallerThumbnails) {
 				destination = source;
-			}
-			
-			if (source.Width > destination.Width || source.Height > destination.Height) {
-				double ratio = (double)source.Width / (double)source.Height;
-
-				if (source.Width < source.Height) {
-					//Keep height, scale width
-					destination.Width = (int)(destination.Height * ratio);
-				}
-				else {
-					//Keep width, scale height
-					destination.Height = (int)(destination.Width / ratio);
+			} else if (source.Width <= 0 || source.Height <= 0) {
+				//Avoid division by zero
+				destination = new Size(0, 0);
+			} else {
+				Size scaledDestination = new Size(destination.Height * source.Width / source.Height, destination.Height);
+				if (scaledDestination.Width > destination.Width) {
+					destination = new Size(destination.Width, destination.Width * source.Height / source.Width);
+				} else {
+					destination = scaledDestination;
 				}
 			}
 

@@ -214,29 +214,8 @@ namespace WindowsFormsAero.Dwm {
 			Point offset = Point.Empty;
 
 			//Compute offset of this control from top level form
-			//TODO: there MUST be a less ugly way to do this...
-			Control ctrl = this;
-			do {
-				offset = new Point(offset.X + ctrl.Location.X, offset.Y + ctrl.Location.Y);
-				ctrl = ctrl.Parent;
-			}
-			while (ctrl != null && ctrl != this.TopLevelControl);
-
-
-			/*Native.RECT sldjfns;
-			Native.Windows.GetWindowRect(this.Handle, out sldjfns);*/
-
-			//Rectangle ctrlOnScrn = RectangleToScreen(this.ClientRectangle);
-			//Rectangle formOnScrn = RectangleToScreen(this.TopLevelControl.ClientRectangle);
-
-			//Point scrnCtrlOrigin = this.PointToScreen(scrn.Location);
-			//Point formCtrlOrigin = this.PointToClient(scrn.Location);
-
-			/*Point loc = scrn.Location;
-			Point shift = new Point(
-				loc.X - SystemInformation.Border3DSize.Width,
-				loc.Y - SystemInformation.Border3DSize.Height
-			);*/
+			if (this.TopLevelControl != null)
+				offset = this.TopLevelControl.PointToClient(this.PointToScreen(this.ClientRectangle.Location));
 
 			//Fit source rectangle to thumbnail rectangle
 			Size destination = this.ClientSize;
